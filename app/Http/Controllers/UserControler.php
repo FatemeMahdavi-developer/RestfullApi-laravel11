@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\RestFullApi\ApiResponseBuilder;
+use App\RestFullApi\Facade\ApiResponse;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -16,15 +15,17 @@ class UserControler extends Controller
     public function index()
     {
         try{
-            return (new ApiResponseBuilder())->withData(User::all())
+            return ApiResponse::withData(User::all())
                 ->withMessage('Show All user')
                 ->withStatus(Response::HTTP_OK)
                 ->Builder();
+
         }catch(Throwable $th){
-            return (new ApiResponseBuilder())->withData($th->getMessage())
+            return ApiResponse::withData($th->getMessage())
             ->withMessage('Server Error')
             ->withStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
             ->Builder();
+
         }
     }
 
