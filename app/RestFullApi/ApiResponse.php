@@ -5,7 +5,7 @@ namespace App\RestFullApi;
 class ApiResponse
 {
     private mixed $data;
-    private string $message;
+    private ?string $message=null;
     private int $status;
 
     public function setData(mixed $data)
@@ -13,7 +13,7 @@ class ApiResponse
         $this->data=$data;
     }
 
-    public function setMessage(string $message)
+    public function setMessage(?string $message)
     {
         $this->message=$message;
     }
@@ -25,9 +25,15 @@ class ApiResponse
 
     public function response(){
         $body=[];
+        // if(!is_null($this->data)){
+        //     $body['data']=$this->data;
+        // }
+        // if(!is_null($this->message)){
+        //     $body['message']=$this->message;
+        // }
         !is_null($this->data)&&$body['data']=$this->data;
         !is_null($this->message)&&$body['message']=$this->message;
-
+        
         return response()->json($body,$this->status);
     }
 }
