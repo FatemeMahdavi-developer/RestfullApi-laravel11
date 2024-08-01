@@ -35,21 +35,29 @@ class UserControler extends Controller
         }
     }
 
-    public function store(UserRequest $request)
+    public function store(Request $request)
     {
-        $inputs=$request->validated();
+        $validation=Validator::make($request->all(),[
+            'name'=>['required','string','min:3','max:255'],
+            'lastname'=>['required','string','min:3','max:255'],
+            'email'=>['required','email','unique:users','min:3','max:255'],
+            'password'=>['required','string','min:8','max:18'],
+        ]);
+
+        if($validation->fails()){
+            return response()->json([
+                'data'=>$validation->errors(),
+                'msg'=>'Fixed Items'
+            ],Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $inputs=$validation->validated();
         $result=$this->Userservices->register($inputs);
     
         if($result->ok){
-            return ApiResponse::withData($result->data)
-                ->withMessage('User Added')
-                ->withStatus(Response::HTTP_ACCEPTED)
-                ->Builder();
+            return ApiResponse::withData($result->data)->withMessage('User Added')->withStatus(Response::HTTP_ACCEPTED)->Builder();
         }else{
-            return ApiResponse::withData($result->data)
-                ->withMessage('Server Error')
-                ->withStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
-                ->Builder();
+            return ApiResponse::withData($result->data)->withMessage('Server Error')->withStatus(Response::HTTP_INTERNAL_SERVER_ERROR)->Builder();
         }
     }
 
